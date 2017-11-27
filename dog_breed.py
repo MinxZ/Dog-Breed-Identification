@@ -17,7 +17,7 @@ from tqdm import tqdm
 
 # Loading Datasets
 
-df = pd.read_csv('labels.csv')
+df = pd.read_csv('../dog_breed_datasets/labels.csv')
 df.head()
 
 n = len(df)
@@ -30,7 +30,9 @@ width = 299
 X = np.zeros((n, width, width, 3), dtype=np.uint8)
 y = np.zeros((n, n_class), dtype=np.uint8)
 for i in tqdm(range(n)):
-    X[i] = cv2.resize(cv2.imread('train/%s.jpg' % df['id'][i]), (width, width))
+    X[i] = cv2.resize(
+        cv2.imread('../dog_breed_datasets/train/%s.jpg' % df['id'][i]),
+        (width, width))
     y[i][class_to_num[df['breed'][i]]] = 1
 
 # Data visualization
@@ -105,13 +107,14 @@ SVG(model_to_dot(model, show_shapes=True).create(prog='dot', format='svg'))
 # plt.xlabel('epoch')
 
 # Loading test Datasets
-df2 = pd.read_csv('sample_submission.csv')
+df2 = pd.read_csv('../dog_breed_datasets/ample_submission.csv')
 
 n_test = len(df2)
 X_test = np.zeros((n_test, width, width, 3), dtype=np.uint8)
 for i in tqdm(range(n_test)):
     X_test[i] = cv2.resize(
-        cv2.imread('test/%s.jpg' % df2['id'][i]), (width, width))
+        cv2.imread('../dog_breed_datasets/test/%s.jpg' % df2['id'][i]),
+        (width, width))
 
 # Compute test dataset features
 
