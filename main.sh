@@ -12,5 +12,3 @@ unzip '*.zip'
 rm *.zip
 
 cd ../Dog-Breed-Identification
-
-python dog_breed.py
