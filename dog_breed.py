@@ -109,7 +109,7 @@ h = model.fit(features, y, batch_size=128, epochs=10, validation_split=0.1)
 # plt.xlabel('epoch')
 
 # Loading test Datasets
-df2 = pd.read_csv('../dog_breed_datasets/ample_submission.csv')
+df2 = pd.read_csv('../dog_breed_datasets/sample_submission.csv')
 
 n_test = len(df2)
 X_test = np.zeros((n_test, width, width, 3), dtype=np.uint8)

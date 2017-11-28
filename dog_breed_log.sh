@@ -31,6 +31,7 @@ apt-get upgrade -y
 
 # install terminal tools
 apt install -y git \
+		wget \
 	  ncdu \
     tmux \
 		htop \
@@ -48,7 +49,9 @@ apt autoremove
 pip install \
 	  opencv-python\
 	  keras\
-	  tqdm
+	  tqdm\
+		pydot\
+		shutil
 
 # # config juoyter notebook
 # mkdir ssl
