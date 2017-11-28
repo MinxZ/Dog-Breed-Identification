@@ -66,7 +66,9 @@ def get_features(MODEL, data=X):
     return features
 
 
+print('Start computing inception_features: ')
 inception_features = get_features(InceptionV3, X)
+print('Start computing xception_features: ')
 xception_features = get_features(Xception, X)
 features = np.concatenate([inception_features, xception_features], axis=-1)
 
@@ -82,7 +84,7 @@ h = model.fit(features, y, batch_size=128, epochs=10, validation_split=0.1)
 
 # Models visualization
 
-SVG(model_to_dot(model, show_shapes=True).create(prog='dot', format='svg'))
+# SVG(model_to_dot(model, show_shapes=True).create(prog='dot', format='svg'))
 
 # Training preprocess visualization
 
@@ -117,9 +119,11 @@ for i in tqdm(range(n_test)):
         (width, width))
 
 # Compute test dataset features
-
+print('Start computing inception_features: ')
 inception_features = get_features(InceptionV3, X_test)
+print('Start computing xception_features: ')
 xception_features = get_features(Xception, X_test)
+
 features_test = np.concatenate(
     [inception_features, xception_features], axis=-1)
 
