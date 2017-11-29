@@ -77,6 +77,7 @@ git clone https://github.com/MinxZ/Dog-Breed-Identification.git
 cd Dog-Breed-Identification
 bash main.sh
 
+git pull
 git add *
 git commit -m "add something"
 git push origin master
