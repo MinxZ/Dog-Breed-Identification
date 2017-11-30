@@ -1,19 +1,28 @@
+import os
 import random
+from datetime import datetime
 
+import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from IPython.display import SVG
-
-import cv2
+from keras import backend as K
 from keras.applications import *
 from keras.applications.inception_v3 import preprocess_input
+from keras.applications.vgg16 import (VGG16, decode_predictions,
+                                      preprocess_input)
+from keras.callbacks import EarlyStopping, TensorBoard
 from keras.layers import *
 from keras.models import *
 from keras.optimizers import *
+from keras.preprocessing import image
+from keras.preprocessing.image import ImageDataGenerator
 from keras.regularizers import *
 from keras.utils.vis_utils import model_to_dot
 from tqdm import tqdm
+
+#from keras_tqdm import TQDMNotebookCallback
 
 # Loading Datasets
 
