@@ -53,7 +53,7 @@ pip install \
 		pydot\
 		shutil
 
-# # config juoyter notebook
+# # config jupyter notebook
 # mkdir ssl
 # cd ssl
 # openssl req -x509 -nodes -days 365 -newkey rsa:1024 -keyout "cert.key" -out "cert.pem" -batch

@@ -116,7 +116,7 @@ def fine_tune(MODEL, model_name, X=X):
     # model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
     model.compile(
         loss='categorical_crossentropy',
-        optimizer=SGD(lr=0.001, momentum=0.9, nesterov=True),
+        optimizer=SGD(lr=0.0001, momentum=0.9, nesterov=True, decay=0.0023),
         metrics=['accuracy'])
 
     batch_size = 16
