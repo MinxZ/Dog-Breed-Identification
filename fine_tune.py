@@ -3,10 +3,8 @@ import random
 from datetime import datetime
 
 import cv2
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from IPython.display import SVG
 from keras import backend as K
 from keras.applications import *
 from keras.applications.inception_v3 import preprocess_input
@@ -116,7 +114,7 @@ def fine_tune(MODEL, model_name, X=X):
     # model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
     model.compile(
         loss='categorical_crossentropy',
-        optimizer=SGD(lr=0.0001, momentum=0.9, nesterov=True, decay=0.0023),
+        optimizer=SGD(lr=0.005, momentum=0.9, nesterov=True, decay=0.014),
         metrics=['accuracy'])
 
     batch_size = 16
