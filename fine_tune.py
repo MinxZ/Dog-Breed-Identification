@@ -67,7 +67,6 @@ def fine_tune(MODEL, model_name, X=X):
     features = get_features(MODEL, X)
 
     # Training models
-
     inputs = Input(features.shape[1:])
     x = inputs
     x = Dropout(0.5)(x)
@@ -81,7 +80,9 @@ def fine_tune(MODEL, model_name, X=X):
 
     model.save('fc_' + model_name + '.h5', 'w')
 
+
     # Fine-tune the model
+    print("\n\n Fine tune "+model_name+" : \n")
 
     datagen = ImageDataGenerator(
         preprocessing_function=preprocess_input,
