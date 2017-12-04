@@ -2,8 +2,13 @@ rm *.h5
 rm *.csv
 
 models='Xception InceptionV3 InceptionResNetV2'
-for model in $models
+for model in models
 do
+python train.py \
+  --model $model \
+  --lr 5e-03 \
+  --optimizer "Nadam"
+
 python train.py \
   --model $model \
   --lr 1e-04 \
@@ -31,3 +36,4 @@ python train.py \
   --optimizer "SGD" \
   --patience 2
 done
+
