@@ -1,14 +1,37 @@
-cd ..
+rm Xception.h5 \
+  InceptionV3.h5 \
+  InceptionResNetV2
+  
+rm *.csv
 
-mkdir dog_breed_datasets
-cd dog_breed_datasets
-wget --load-cookies cookies.txt \
-        https://www.kaggle.com/c/dog-breed-identification/download/labels.csv.zip \
-        https://www.kaggle.com/c/dog-breed-identification/download/sample_submission.csv.zip \
-        https://www.kaggle.com/c/dog-breed-identification/download/train.zip \
-        https://www.kaggle.com/c/dog-breed-identification/download/test.zip
+models='Xception InceptionV3 InceptionResNetV2'
+for model in $models
+do
+python train.py \
+  --model $model \
+  --lr 1e-04 \
+  --optimizer "Nadam"
 
-unzip '*.zip'
-rm *.zip
+python train.py \
+  --model $model \
+  --lr 5e-05 \
+  --optimizer "Nadam"
 
-cd ../Dog-Breed-Identification
+python train.py \
+  --model $model \
+  --lr 5e-04 \
+  --optimizer "SGD"
+
+python train.py \
+  --model $model \
+  --lr 1e-04 \
+  --optimizer "SGD" \
+  --patience 2
+
+python train.py \
+  --model $model
+  --lr 5e-05 \
+  --optimizer "SGD" \
+  --patience 2
+done
+

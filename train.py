@@ -85,11 +85,10 @@ def run(model_name, lr, optimizer, epoch, patience, batch_size):
             preprocessing_function=preprocess_input,
             shear_range=0.2,
             zoom_range=0.2,
-            horizontal_flip=True)
-
-        # rotation_range=20,
-        # width_shift_range=0.2,
-        # height_shift_range=0.2)
+            horizontal_flip=True,
+            rotation_range=20,
+            width_shift_range=0.2,
+            height_shift_range=0.2)
 
         val_datagen = ImageDataGenerator(
             preprocessing_function=preprocess_input)
@@ -105,9 +104,6 @@ def run(model_name, lr, optimizer, epoch, patience, batch_size):
         x = Dropout(0.5)(x)
         x = Dense(n_class, activation='softmax', name='predictions')(x)
         model = Model(inputs=inputs, outputs=x)
-
-        # for layer in model.layers[:114]:
-        #     layer.trainable = False
 
         try:
             model.load_weights(model_name + '.h5')
@@ -156,11 +152,9 @@ def run(model_name, lr, optimizer, epoch, patience, batch_size):
 
         class LossHistory(keras.callbacks.Callback):
             def on_train_begin(self, logs={}):
-                # self.val_losses = []
                 self.losses = []
 
             def on_epoch_end(self, batch, logs={}):
-                # self.val_losses.append(logs.get("val_loss"))
                 self.losses.append((logs.get('loss'), logs.get("val_loss")))
 
         history = LossHistory()
@@ -177,20 +171,8 @@ def run(model_name, lr, optimizer, epoch, patience, batch_size):
             validation_steps=len(x_val) / batch_size,
             epochs=epoch,
             callbacks=[early_stopping, checkpointer, history])
-        #         print(history.losses)
-        # np.savetxt("val_losses_" + str(optimizer) + "_" + str(lr) + ".csv",
-        #            history.losses)
         with open(model_name + ".csv", 'a') as f_handle:
             np.savetxt(f_handle, history.losses)
-        # with open(model_name + "2.csv", 'a') as f_handle:
-        #     np.savetxt(f_handle, model_name + str(optimizer) + "_" + str(lr))
-        #     np.savetxt(f_handle, history.losses)
-        # model.save(model_name + '.h5', 'w')
-
-    # list_model = [Xception, InceptionV3, InceptionResNetV2]
-    # list_name_model = ["Xception", "InceptionV3", "InceptionResNetV2"]
-    #
-    # for x in range(3):
     list_model = {
         "Xception": Xception,
         "InceptionV3": InceptionV3,
@@ -198,8 +180,6 @@ def run(model_name, lr, optimizer, epoch, patience, batch_size):
     }
     fine_tune(list_model[model_name], model_name, optimizer, lr, epoch,
               patience, batch_size, X)
-    # fine_tune(list_model[0], list_name_model[0], optimizer, lr, epoch,
-    #           patience, batch_size, X)
 
 
 def parse_args():
