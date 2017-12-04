@@ -23,7 +23,7 @@ from keras.utils.vis_utils import model_to_dot
 from tqdm import tqdm
 
 
-def run(lr, optimizer, epoch, patience, batch_size):
+def run(model_name, lr, optimizer, epoch, patience, batch_size):
     # Loading Datasets
 
     df = pd.read_csv('../dog_breed_datasets/labels.csv')
@@ -187,12 +187,17 @@ def run(lr, optimizer, epoch, patience, batch_size):
         #     np.savetxt(f_handle, history.losses)
         # model.save(model_name + '.h5', 'w')
 
-    list_model = [Xception, InceptionV3, InceptionResNetV2]
-    list_name_model = ["Xception", "InceptionV3", "InceptionResNetV2"]
-
-    for x in range(3):
-        fine_tune(list_model[x], list_name_model[x], optimizer, lr, epoch,
-                  patience, batch_size, X)
+    # list_model = [Xception, InceptionV3, InceptionResNetV2]
+    # list_name_model = ["Xception", "InceptionV3", "InceptionResNetV2"]
+    #
+    # for x in range(3):
+    list_model = {
+        "Xception": Xception,
+        "InceptionV3": InceptionV3,
+        "InceptionResNetV2": InceptionResNetV2
+    }
+    fine_tune(list_model[model_name], model_name, optimizer, lr, epoch,
+              patience, batch_size, X)
     # fine_tune(list_model[0], list_name_model[0], optimizer, lr, epoch,
     #           patience, batch_size, X)
 
@@ -202,19 +207,23 @@ def parse_args():
     """
     parser = argparse.ArgumentParser(description="Hyper parameter")
     parser.add_argument(
-        "--lr", help="learning rate", default=0.0005, type=float)
+        "--model", help="Model to use", default="Xception", type=str)
     parser.add_argument(
-        "--optimizer", help="optimizer", default="SGD", type=str)
+        "--lr", help="learning rate", default=0.0001, type=float)
     parser.add_argument(
-        "--epoch", help="Number of epochs", default=10000, type=int)
+        "--optimizer", help="optimizer", default="Nadam", type=str)
+    parser.add_argument(
+        "--epoch", help="Number of epochs", default=100, type=int)
     parser.add_argument(
         "--patience", help="Patience to wait", default=1, type=int)
     parser.add_argument(
         "--batch_size", help="Batch size", default=16, type=int)
+
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     args = parse_args()
-    run(args.lr, args.optimizer, args.epoch, args.patience, args.batch_size)
+    run(args.model, args.lr, args.optimizer, args.epoch, args.patience,
+        args.batch_size)
 
