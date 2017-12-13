@@ -45,6 +45,7 @@ def load_data():
             (width, width))
         y[i][class_to_num[df['breed'][i]]] = 1
 
+    X = (X/255. - 0.5)*2
     dvi = int(X.shape[0] * 0.9)
     x_train = X[:dvi, :, :, :]
     y_train = y[:dvi, :]
