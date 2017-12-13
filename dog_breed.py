@@ -22,7 +22,6 @@ from keras.regularizers import *
 from keras.utils.vis_utils import model_to_dot
 from tqdm import tqdm
 
-#from keras_tqdm import TQDMNotebookCallback
 
 # Loading Datasets
 
