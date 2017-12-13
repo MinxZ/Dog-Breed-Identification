@@ -22,42 +22,44 @@ from keras.regularizers import *
 from keras.utils.vis_utils import model_to_dot
 from tqdm import tqdm
 
+# Loading Datasets
+def load_data():
+
+    df = pd.read_csv('../dog_breed_datasets/labels.csv')
+    df.head()
+
+    n = len(df)
+    breed = set(df['breed'])
+    n_class = len(breed)
+    class_to_num = dict(zip(breed, range(n_class)))
+    num_to_class = dict(zip(range(n_class), breed))
+
+    width = 299
+    X = np.zeros((n, width, width, 3), dtype=np.uint8)
+    y = np.zeros((n, n_class), dtype=np.uint8)
+    # Loading Datasets
+    print('\n\n Loading Datasets. \n')
+    for i in tqdm(range(n)):
+        X[i] = cv2.resize(
+            cv2.imread('../dog_breed_datasets/train/%s.jpg' % df['id'][i]),
+            (width, width))
+        y[i][class_to_num[df['breed'][i]]] = 1
+
+    dvi = int(X.shape[0] * 0.9)
+    x_train = X[:dvi, :, :, :]
+    y_train = y[:dvi, :]
+    x_val = X[dvi:, :, :, :]
+    y_val = y[dvi:, :]
+    return x_train, y_train, x_val, y_val
+
+
 
 def run(model_name, lr, optimizer, epoch, patience, batch_size, test=None):
-    # Loading Datasets
-    def load_data():
-
-        df = pd.read_csv('../dog_breed_datasets/labels.csv')
-        df.head()
-
-        n = len(df)
-        breed = set(df['breed'])
-        n_class = len(breed)
-        class_to_num = dict(zip(breed, range(n_class)))
-        num_to_class = dict(zip(range(n_class), breed))
-
-        width = 299
-        X = np.zeros((n, width, width, 3), dtype=np.uint8)
-        y = np.zeros((n, n_class), dtype=np.uint8)
-        # Loading Datasets
-        print('\n\n Loading Datasets. \n')
-        for i in tqdm(range(n)):
-            X[i] = cv2.resize(
-                cv2.imread('../dog_breed_datasets/train/%s.jpg' % df['id'][i]),
-                (width, width))
-            y[i][class_to_num[df['breed'][i]]] = 1
-
-        dvi = int(X.shape[0] * 0.9)
-        x_train = X[:dvi, :, :, :]
-        y_train = y[:dvi, :]
-        x_val = X[dvi:, :, :, :]
-        y_val = y[dvi:, :]
-        return x_train, y_train, x_val, y_val
-
     x_train, y_train, x_val, y_val = load_data()
-
+    width = x_train.shape[1]
+    n_class = y_train.shape[1]
     # Compute the bottleneck feature
-    def get_features(MODEL, data=X):
+    def get_features(MODEL, data=x_train):
         cnn_model = MODEL(
             include_top=False,
             input_shape=(width, width, 3),
@@ -79,14 +81,14 @@ def run(model_name, lr, optimizer, epoch, patience, batch_size, test=None):
                   epoch,
                   patience,
                   batch_size,
-                  X=X,
+                  X=x_train,
                   test=None):
         # Fine-tune the model
         print("\n\n Fine tune " + model_name + " : \n")
 
         from random_eraser import get_random_eraser
         datagen = ImageDataGenerator(
-            reprocessing_function=get_random_eraser(pixel_level=True),
+            preprocessing_function=get_random_eraser(pixel_level=True),
             horizontal_flip=True,
             shear_range=0.1,
             zoom_range=0.1,
@@ -134,7 +136,7 @@ def run(model_name, lr, optimizer, epoch, patience, batch_size, test=None):
                     metrics=['accuracy'])
                 h = model_fc.fit(
                     features,
-                    y,
+                    y_train,
                     batch_size=128,
                     epochs=5,
                     validation_split=0.1)
@@ -191,7 +193,7 @@ def run(model_name, lr, optimizer, epoch, patience, batch_size, test=None):
         "InceptionResNetV2": InceptionResNetV2
     }
     fine_tune(list_model[model_name], model_name, optimizer, lr, epoch,
-              patience, batch_size, X, test)
+              patience, batch_size, x_train, test)
 
 
 def parse_args():
