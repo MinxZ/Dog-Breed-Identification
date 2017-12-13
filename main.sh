@@ -4,19 +4,11 @@ rm Xception.h5 \
 
 rm *.csv
 
-<<<<<<< HEAD
 python train.py \
   --model "Xception" \
   --lr 1e-03 \
   --optimizer "Adam" \
   --patience 5
-=======
-# python train.py \
-#   --model "Xception" \
-#   --lr 1e-04 \
-#   --optimizer "SGD" \
-#   --patience 5
->>>>>>> f2f416d56c101acd584378a86922ab2e62a7e552
 
 models='Xception InceptionV3 InceptionResNetV2'
 for model in $models
