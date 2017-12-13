@@ -22,40 +22,41 @@ from keras.regularizers import *
 from keras.utils.vis_utils import model_to_dot
 from tqdm import tqdm
 
-# Loading Datasets
-def load_data():
-
-    df = pd.read_csv('../dog_breed_datasets/labels.csv')
-    df.head()
-
-    n = len(df)
-    breed = set(df['breed'])
-    n_class = len(breed)
-    class_to_num = dict(zip(breed, range(n_class)))
-    num_to_class = dict(zip(range(n_class), breed))
-
-    width = 299
-    X = np.zeros((n, width, width, 3), dtype=np.uint8)
-    y = np.zeros((n, n_class), dtype=np.uint8)
-    # Loading Datasets
-    print('\n\n Loading Datasets. \n')
-    for i in tqdm(range(n)):
-        X[i] = cv2.resize(
-            cv2.imread('../dog_breed_datasets/train/%s.jpg' % df['id'][i]),
-            (width, width))
-        y[i][class_to_num[df['breed'][i]]] = 1
-
-    X = (X/255. - 0.5)*2
-    dvi = int(X.shape[0] * 0.9)
-    x_train = X[:dvi, :, :, :]
-    y_train = y[:dvi, :]
-    x_val = X[dvi:, :, :, :]
-    y_val = y[dvi:, :]
-    return x_train, y_train, x_val, y_val
+#
 
 
 
 def run(model_name, lr, optimizer, epoch, patience, batch_size, test=None):
+     # Loading Datasets
+    def load_data():
+
+        df = pd.read_csv('../dog_breed_datasets/labels.csv')
+        df.head()
+
+        n = len(df)
+        breed = set(df['breed'])
+        n_class = len(breed)
+        class_to_num = dict(zip(breed, range(n_class)))
+        num_to_class = dict(zip(range(n_class), breed))
+
+        width = 299
+        X = np.zeros((n, width, width, 3), dtype=np.uint8)
+        y = np.zeros((n, n_class), dtype=np.uint8)
+        # Loading Datasets
+        print('\n\n Loading Datasets. \n')
+        for i in tqdm(range(n)):
+            X[i] = cv2.resize(
+                cv2.imread('../dog_breed_datasets/train/%s.jpg' % df['id'][i]),
+                (width, width))
+            y[i][class_to_num[df['breed'][i]]] = 1
+
+        X = (X/255. - 0.5)*2
+        dvi = int(X.shape[0] * 0.9)
+        x_train = X[:dvi, :, :, :]
+        y_train = y[:dvi, :]
+        x_val = X[dvi:, :, :, :]
+        y_val = y[dvi:, :]
+        return x_train, y_train, x_val, y_val
     x_train, y_train, x_val, y_val = load_data()
     width = x_train.shape[1]
     n_class = y_train.shape[1]
