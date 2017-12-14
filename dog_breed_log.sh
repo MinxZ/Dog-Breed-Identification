@@ -1,5 +1,3 @@
-
-
 sudo docker ps
 sudo docker ps -a
 sudo docker image ls
@@ -81,4 +79,3 @@ git pull
 git add *
 git commit -m "add something"
 git push origin master
-
