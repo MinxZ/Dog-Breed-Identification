@@ -137,11 +137,7 @@ def run(model_name, lr, optimizer, epoch, patience, batch_size, test=None):
                     validation_split=0.1)
 
                 model_fc.save('fc_' + model_name + '.h5', 'w')
-<<<<<<< HEAD
                 model.load_weights('../dog_breed_datasets/'+'fc_' + model_name + '.h5', by_name=True)
-=======
-                model.load_weights('fc_' + model_name + '.h5', by_name=True)
->>>>>>> b0853cd4d1726af9d6144cbd01cb9bf0c4006772
 
 
         print("\n " + "Optimizer=" + optimizer + " lr=" + str(lr) + " \n")
