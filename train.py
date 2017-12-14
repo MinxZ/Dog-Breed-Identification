@@ -45,9 +45,9 @@ def run(model_name, lr, optimizer, epoch, patience, batch_size, test=None):
         # Loading Datasets
         print('\n\n Loading Datasets. \n')
         for i in tqdm(range(n)):
-            X[i] = cv2.resize(
+            X[i] = (cv2.resize(
                 cv2.imread('../dog_breed_datasets/train/%s.jpg' % df['id'][i]),
-                (width, width))
+                (width, width))/255. - 0.5)*2
             y[i][class_to_num[df['breed'][i]]] = 1
 
         X = (X/255. - 0.5)*2
@@ -57,7 +57,12 @@ def run(model_name, lr, optimizer, epoch, patience, batch_size, test=None):
         x_val = X[dvi:, :, :, :]
         y_val = y[dvi:, :]
         return x_train, y_train, x_val, y_val
-    x_train, y_train, x_val, y_val = load_data()
+    # x_train, y_train, x_val, y_val = load_data()
+    x_train = np.load('x_train.npy')
+    y_train = np.load('y_train.npy')
+    x_val = np.load('x_val.npy')
+    y_val = np.load('y_val.npy')
+
     width = x_train.shape[1]
     n_class = y_train.shape[1]
     # Compute the bottleneck feature
