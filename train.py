@@ -40,7 +40,7 @@ def run(model_name, lr, optimizer, epoch, patience, batch_size, test=None):
         num_to_class = dict(zip(range(n_class), breed))
 
         width = 299
-        X = np.zeros((n, width, width, 3), dtype=np.uint8)
+        X = np.zeros((n, width, width, 3), dtype=np.float16)
         y = np.zeros((n, n_class), dtype=np.uint8)
         # Loading Datasets
         print('\n\n Loading Datasets. \n')
