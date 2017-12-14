@@ -45,9 +45,9 @@ def run(model_name, lr, optimizer, epoch, patience, batch_size, test=None):
         # Loading Datasets
         print('\n\n Loading Datasets. \n')
         for i in tqdm(range(n)):
-            X[i] = (cv2.resize(
+            X[i] = cv2.resize(
                 cv2.imread('../dog_breed_datasets/train/%s.jpg' % df['id'][i]),
-                (width, width))/255. - 0.5)*2
+                (width, width))/127.5 - 1
             y[i][class_to_num[df['breed'][i]]] = 1
 
         X = (X/255. - 0.5)*2
@@ -73,7 +73,7 @@ def run(model_name, lr, optimizer, epoch, patience, batch_size, test=None):
             weights='imagenet')
         inputs = Input((width, width, 3))
         x = inputs
-        x = Lambda(preprocess_input, name='preprocessing')(x)
+        # x = Lambda(preprocess_input, name='preprocessing')(x)
         x = cnn_model(x)
         x = GlobalAveragePooling2D()(x)
         cnn_model = Model(inputs, x)
@@ -81,7 +81,7 @@ def run(model_name, lr, optimizer, epoch, patience, batch_size, test=None):
         features = cnn_model.predict(data, batch_size=32, verbose=1)
         return features
 
-    def fine_tune(MODEL,
+   def fine_tune(MODEL,
                   model_name,
                   optimizer,
                   lr,
@@ -91,19 +91,7 @@ def run(model_name, lr, optimizer, epoch, patience, batch_size, test=None):
                   X=x_train,
                   test=None):
         # Fine-tune the model
-        print("\n\n Fine tune " + model_name + " : \n")
-
-        from random_eraser import get_random_eraser
-        datagen = ImageDataGenerator(
-            preprocessing_function=get_random_eraser(pixel_level=True),
-            horizontal_flip=True,
-            shear_range=0.1,
-            zoom_range=0.1,
-            rotation_range=10,
-            width_shift_range=0.1,
-            height_shift_range=0.1)
-
-        val_datagen = ImageDataGenerator()
+        print("\n\n Fine tune " + model_name + ": \n")
 
         inputs = Input((width, width, 3))
         x = inputs
@@ -117,13 +105,13 @@ def run(model_name, lr, optimizer, epoch, patience, batch_size, test=None):
         x = Dense(n_class, activation='softmax', name='predictions')(x)
         model = Model(inputs=inputs, outputs=x)
 
-        # Loading weights
+#         Loading weights
         try:
-            model.load_weights(model_name + '.h5')
+            model.load_weights('../dog_breed_datasets/'+model_name + '.h5')
             print('Load ' + model_name + '.h5 successfully.')
         except:
             try:
-                model.load_weights('fc_' + model_name + '.h5', by_name=True)
+                model.load_weights('../dog_breed_datasets/'+'fc_' + model_name + '.h5', by_name=True)
                 print('Fail to load ' + model_name + '.h5, load fc_' +
                       model_name + '.h5 instead.')
             except:
@@ -149,6 +137,8 @@ def run(model_name, lr, optimizer, epoch, patience, batch_size, test=None):
                     validation_split=0.1)
 
                 model_fc.save('fc_' + model_name + '.h5', 'w')
+                model.load_weights('../dog_breed_datasets/'+'fc_' + model_name + '.h5', by_name=True)
+
 
         print("\n " + "Optimizer=" + optimizer + " lr=" + str(lr) + " \n")
         if optimizer == "Adam":
@@ -161,20 +151,31 @@ def run(model_name, lr, optimizer, epoch, patience, batch_size, test=None):
                 loss='categorical_crossentropy',
                 optimizer=SGD(lr=lr, momentum=0.9, nesterov=True),
                 metrics=['accuracy'])
+
+        from random_eraser import get_random_eraser
+
+        datagen = ImageDataGenerator(
+            preprocessing_function=get_random_eraser(p=0.2, s_l=0.02, s_h=0.2, r_1=0.3, r_2=1/0.3,
+                  v_l=0, v_h=60, pixel_level=False),
+            horizontal_flip=True,
+            zoom_range=0.1,
+            rotation_range=10)
+
+        val_datagen = ImageDataGenerator()
+
         if not test:
             class LossHistory(keras.callbacks.Callback):
                 def on_train_begin(self, logs={}):
                     self.losses = []
                 def on_epoch_end(self, batch, logs={}):
                     self.losses.append((logs.get('loss'), logs.get("val_loss")))
-
             history = LossHistory()
-
             early_stopping = EarlyStopping(
                 monitor='val_loss', patience=patience, verbose=1, mode='auto')
             checkpointer = ModelCheckpoint(
                 filepath=model_name + '.h5', verbose=0, save_best_only=True)
-            reduce_lr = ReduceLROnPlateau(factor=0.2, patience=3, verbose=1)
+            reduce_lr = ReduceLROnPlateau(factor=0.2, patience=1, verbose=1)
+
             model.fit_generator(
                 datagen.flow(x_train, y_train, batch_size=batch_size),
                 steps_per_epoch=len(x_train) / batch_size,
