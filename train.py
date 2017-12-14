@@ -58,10 +58,10 @@ def run(model_name, lr, optimizer, epoch, patience, batch_size, test=None):
         y_val = y[dvi:, :]
         return x_train, y_train, x_val, y_val
     # x_train, y_train, x_val, y_val = load_data()
-    x_train = np.load('x_train.npy')
-    y_train = np.load('y_train.npy')
-    x_val = np.load('x_val.npy')
-    y_val = np.load('y_val.npy')
+    x_train = np.load('../dog_breed_datasets/x_train.npy')
+    y_train = np.load('../dog_breed_datasets/y_train.npy')
+    x_val = np.load('../dog_breed_datasets/x_val.npy')
+    y_val = np.load('../dog_breed_datasets/y_val.npy')
 
     width = x_train.shape[1]
     n_class = y_train.shape[1]

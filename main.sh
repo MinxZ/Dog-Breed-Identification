@@ -1,4 +1,4 @@
-rm *.h5 
+rm *.h5
 
 rm *.csv
 
@@ -13,7 +13,7 @@ for model in $models
 do
 python train.py \
   --model $model \
-  --lr 1e-04 \
+  --lr 1e-03 \
   --optimizer "Adam"
 
 python train.py \
