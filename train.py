@@ -81,7 +81,7 @@ def run(model_name, lr, optimizer, epoch, patience, batch_size, test=None):
         features = cnn_model.predict(data, batch_size=32, verbose=1)
         return features
 
-   def fine_tune(MODEL,
+    def fine_tune(MODEL,
                   model_name,
                   optimizer,
                   lr,
