@@ -22,12 +22,9 @@ from keras.regularizers import *
 from keras.utils.vis_utils import model_to_dot
 from tqdm import tqdm
 
-#
-
-
 
 def run(model_name, lr, optimizer, epoch, patience, batch_size, test=None):
-     # Loading Datasets
+    # Loading Datasets
     def load_data():
 
         df = pd.read_csv('../dog_breed_datasets/labels.csv')
@@ -174,7 +171,7 @@ def run(model_name, lr, optimizer, epoch, patience, batch_size, test=None):
                 monitor='val_loss', patience=patience, verbose=1, mode='auto')
             checkpointer = ModelCheckpoint(
                 filepath=model_name + '.h5', verbose=0, save_best_only=True)
-            reduce_lr = ReduceLROnPlateau(factor=0.2, patience=1, verbose=1)
+            reduce_lr = ReduceLROnPlateau(factor=0.2, patience=0, verbose=1)
 
             model.fit_generator(
                 datagen.flow(x_train, y_train, batch_size=batch_size),
@@ -215,9 +212,9 @@ def parse_args():
     parser.add_argument(
         "--optimizer", help="optimizer", default="Adam", type=str)
     parser.add_argument(
-        "--epoch", help="Number of epochs", default=1e5, type=int)
+        "--epoch", help="Number of epochs", default=1e4, type=int)
     parser.add_argument(
-        "--patience", help="Patience to wait", default=7, type=int)
+        "--patience", help="Patience to wait", default=5, type=int)
     parser.add_argument(
         "--batch_size", help="Batch size", default=16, type=int)
 
