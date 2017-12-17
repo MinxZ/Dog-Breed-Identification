@@ -170,8 +170,8 @@ def run(model_name, lr, optimizer, epoch, patience, batch_size, test=None):
             early_stopping = EarlyStopping(
                 monitor='val_loss', patience=patience, verbose=1, mode='auto')
             checkpointer = ModelCheckpoint(
-                filepath=model_name + '.h5', verbose=0, save_best_only=True)
-            reduce_lr = ReduceLROnPlateau(factor=0.2, patience=0, verbose=1)
+                filepath='../dog_breed_datasets/'+model_name + '.h5', verbose=0, save_best_only=True)
+            reduce_lr = ReduceLROnPlateau(factor=0.5, patience=0, verbose=1)
 
             model.fit_generator(
                 datagen.flow(x_train, y_train, batch_size=batch_size),
