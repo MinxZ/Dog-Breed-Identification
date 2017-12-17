@@ -1,18 +1,18 @@
+from __future__ import absolute_import, division, print_function
+
+import argparse
 import os
 import random
 from datetime import datetime
 
 import cv2
-import matplotlib.pyplot as plt
+import keras
 import numpy as np
 import pandas as pd
-from IPython.display import SVG
 from keras import backend as K
 from keras.applications import *
 from keras.applications.inception_v3 import preprocess_input
-from keras.applications.vgg16 import (VGG16, decode_predictions,
-                                      preprocess_input)
-from keras.callbacks import EarlyStopping, TensorBoard
+from keras.callbacks import *
 from keras.layers import *
 from keras.models import *
 from keras.optimizers import *
@@ -24,10 +24,8 @@ from tqdm import tqdm
 
 
 # Loading Datasets
-
 df = pd.read_csv('../dog_breed_datasets/labels.csv')
 df.head()
-
 n = len(df)
 breed = set(df['breed'])
 n_class = len(breed)
@@ -61,7 +59,7 @@ for i in tqdm(range(n)):
 
 def get_features(MODEL, data=X):
     cnn_model = MODEL(
-        include_top=False, input_shape=(width, width, 3), weights='imagenet')
+        include_top=False, input_shape=(width, width, 3), weights=None)
 
     inputs = Input((width, width, 3))
     x = inputs

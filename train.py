@@ -47,7 +47,6 @@ def run(model_name, lr, optimizer, epoch, patience, batch_size, test=None):
                 (width, width))/127.5 - 1
             y[i][class_to_num[df['breed'][i]]] = 1
 
-        X = (X/255. - 0.5)*2
         dvi = int(X.shape[0] * 0.9)
         x_train = X[:dvi, :, :, :]
         y_train = y[:dvi, :]
@@ -214,7 +213,7 @@ def parse_args():
     parser.add_argument(
         "--epoch", help="Number of epochs", default=1e4, type=int)
     parser.add_argument(
-        "--patience", help="Patience to wait", default=5, type=int)
+        "--patience", help="Patience to wait", default=4, type=int)
     parser.add_argument(
         "--batch_size", help="Batch size", default=16, type=int)
 
