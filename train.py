@@ -28,7 +28,6 @@ def run(model_name, lr, optimizer, epoch, patience, batch_size, test=None):
     def load_data():
 
         df = pd.read_csv('../dog_breed_datasets/labels.csv')
-        df.head()
 
         n = len(df)
         breed = set(df['breed'])

@@ -23,10 +23,17 @@ from keras.utils.vis_utils import model_to_dot
 from tqdm import tqdm
 
 # Loading test Datasets
-df2 = pd.read_csv('../dog_breed_datasets/sample_submission.csv')
+df = pd.read_csv('../dog_breed_datasets/labels.csv')
+n = len(df)
+breed = set(df['breed'])
+n_class = len(breed)
+class_to_num = dict(zip(breed, range(n_class)))
+num_to_class = dict(zip(range(n_class), breed))
 
+df2 = pd.read_csv('../dog_breed_datasets/sample_submission.csv')
+width = 299
 n_test = len(df2)
-X_test = np.zeros((n_test, width, width, 3), dtype=np.uint8)
+X_test = np.zeros((n_test, width, width, 3), dtype=np.float16)
 for i in tqdm(range(n_test)):
     X_test[i] = cv2.resize(
         cv2.imread('../dog_breed_datasets/test/%s.jpg' % df2['id'][i]),
@@ -39,9 +46,38 @@ list_model = {
 }
 
 model_name = "InceptionResNetV2"
-# Loading models
-model = load_model('../dog_breed_datasets/'+model_name + '.h5')
-y_pred = model.predict(X_test)
+
+# # Loading models
+# model = load_model('../dog_breed_datasets/'+model_name + '.h5')
+#
+# y_pred = model.predict(X_test, verbose=1)
+
+def get_features(MODEL, data=X_test):
+    cnn_model = MODEL(
+        include_top=False, input_shape=(width, width, 3), weights=None)
+
+    inputs = Input((width, width, 3))
+    x = inputs
+    x = cnn_model(x)
+    x = GlobalAveragePooling2D()(x)
+    cnn_model = Model(inputs, x)
+
+    features = cnn_model.predict(data, batch_size=64, verbose=1)
+    return features
+
+xception_features = get_features(Xception, X)
+features = np.concatenate([inception_features, xception_features], axis=-1)
+
+# Training models
+inputs = Input(features.shape[1:])
+x = inputs
+x = Dropout(0.5)(x)
+x = Dense(n_class, activation='softmax')(x)
+model = Model(inputs, x)
+model.compile(
+    optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+h = model.fit(features, y, batch_size=128, epochs=10, validation_split=0.1)
+
 
 for b in breed:
     df2[b] = y_pred[:, class_to_num[b]]
